@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-scaffolding
+  labels:
+    app: spring-boot-scaffolding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-boot-scaffolding
+  template:
+    metadata:
+      labels:
+        app: spring-boot-scaffolding
+    spec:
+      containers:
+      - name: spring-boot-scaffolding
+        image: your-acr.azurecr.io/spring-boot-scaffolding:latest
+        ports:
+        - containerPort: 8080
+        # Mount the single file from ConfigMap at /app/config.json using subPath
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config.json
+          subPath: config.json
+      volumes:
+      - name: config-volume
+        configMap:
+          name: spring-boot-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-boot-scaffolding-service
+spec:
+  selector:
+    app: spring-boot-scaffolding
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer

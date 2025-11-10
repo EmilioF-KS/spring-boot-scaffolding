@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  spring-boot-scaffolding:
+    build: .
+    image: spring-boot-scaffolding:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    # Mount local config.json into the container at runtime
+    volumes:
+      - ./config.json:/app/config.json:ro
+    networks:
+      - scaffold-network
+
+networks:
+  scaffold-network:
+    driver: bridge
